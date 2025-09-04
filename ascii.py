@@ -29,7 +29,7 @@ def main():
             ascii_matrix = convert_to_ascii(intensity_matrix, ASCII_CHARS)
             #print_ascii_matrix(ascii_matrix, Fore.GREEN)
             ascii_binary = convert_to_txt(ascii_matrix)
-            draw_image(filename, image.size, ascii_binary)
+            draw_image(filename, image.size, ascii_matrix)
 
         # except Exception as e:
         #     print("Error Occurred while reading file. Exiting.....\n")

@@ -17,11 +17,11 @@ def draw_image(
         ):
     new_filename = old_filename.split('.')[0] + '.ascii.png'
 
-    font = ImageFont.truetype("C:\\Windows\\Fonts\\lucon.ttf", 10)
+    font = ImageFont.truetype("C:\\Windows\\Fonts\\lucon.ttf", 12)
     image_width, image_height = size
-    text = textwrap.fill(ascii_matrix, image_width)
-    #image_width = image_width * 10
-    #image_height = image_height * 16
+    #text = textwrap.fill(ascii_matrix, image_width)
+    image_width = image_width * 9
+    image_height = image_height * 16
 
     image = Image.new("RGBA", (image_width,image_height), "white")
     drawn_image = ImageDraw.Draw(image)
@@ -30,6 +30,9 @@ def draw_image(
     #ascii_width = drawn_image.textlength(ascii_matrix, font=font)
     #ascii_height = 10 * ascii_matrix.count('\n')
     print(ascii_matrix)
-    
-    drawn_image.text((image_width,image_height), text, fill=(0,255,0))
+    y=0
+    for line in ascii_matrix:
+        drawn_image.text((0,y), ''.join(line), fill=(0,255,0), font=font)
+        y += 10
+
     image.save(new_filename, "PNG")
