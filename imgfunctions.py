@@ -15,7 +15,7 @@ def draw_image(
         size: tuple,
         ascii_matrix: list
         ):
-    new_filename = old_filename.split('.')[0] + '.ascii.png'
+    new_filename = 'out/' + old_filename.split('.')[0] + '.ascii.png'
 
     font = ImageFont.truetype("C:\\Windows\\Fonts\\lucon.ttf", 12)
     image_width, image_height = size
