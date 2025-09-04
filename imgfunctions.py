@@ -20,19 +20,24 @@ def draw_image(
     font = ImageFont.truetype("C:\\Windows\\Fonts\\lucon.ttf", 12)
     image_width, image_height = size
     #text = textwrap.fill(ascii_matrix, image_width)
-    image_width = image_width * 9
-    image_height = image_height * 16
+    image_width = image_width * 10
+    image_height = image_height * 12
 
-    image = Image.new("RGBA", (image_width,image_height), "white")
+    image = Image.new("RGBA", (image_width,image_height), "black")
     drawn_image = ImageDraw.Draw(image)
 
 
     #ascii_width = drawn_image.textlength(ascii_matrix, font=font)
     #ascii_height = 10 * ascii_matrix.count('\n')
-    print(ascii_matrix)
-    y=0
-    for line in ascii_matrix:
-        drawn_image.text((0,y), ''.join(line), fill=(0,255,0), font=font)
-        y += 10
+
+    x = 0
+    y = 0
+    
+    for row in ascii_matrix:
+        for column in row:
+            drawn_image.text((x,y), column, fill=(0,255,0), font=font)
+            x += 10
+        x = 0
+        y += 12
 
     image.save(new_filename, "PNG")
