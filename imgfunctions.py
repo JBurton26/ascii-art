@@ -14,8 +14,8 @@ def draw_image(
         old_filename: str,
         size: tuple,
         ascii_matrix: list
-        ):
-    new_filename = 'out/' + old_filename.split('.')[0] + '.ascii.png'
+        ) -> str:
+    new_filename = old_filename.split('.')[0] + '.ascii.png'
 
     font = ImageFont.truetype("C:\\Windows\\Fonts\\lucon.ttf", 12)
     image_width, image_height = size
@@ -37,3 +37,4 @@ def draw_image(
         y += 12
 
     image.save(new_filename, "PNG")
+    return new_filename
