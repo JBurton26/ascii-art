@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from PIL import Image
-import subprocess
 from colorama import Fore, Style
 
 ASCII_CHARS = "`^\",:;Il!i~+_-?][}{1)(|\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"

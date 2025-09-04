@@ -1,4 +1,4 @@
-from staticvalues import MAX_PIXEL_VALUE, ASCII_CHARS
+from staticvalues import MAX_PIXEL_VALUE
 def map_invert_intensity_pixel(
         pixel: float
         ) -> float:

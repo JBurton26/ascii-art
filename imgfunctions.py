@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
+
 from staticvalues import IMAGE_SIZE
-from colorama import Fore
-import textwrap
+
 def get_pixel_matrix(
         image:Image
         ) -> list:
@@ -19,16 +19,12 @@ def draw_image(
 
     font = ImageFont.truetype("C:\\Windows\\Fonts\\lucon.ttf", 12)
     image_width, image_height = size
-    #text = textwrap.fill(ascii_matrix, image_width)
     image_width = image_width * 10
     image_height = image_height * 12
 
     image = Image.new("RGBA", (image_width,image_height), "black")
     drawn_image = ImageDraw.Draw(image)
 
-
-    #ascii_width = drawn_image.textlength(ascii_matrix, font=font)
-    #ascii_height = 10 * ascii_matrix.count('\n')
 
     x = 0
     y = 0
