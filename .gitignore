@@ -6,3 +6,4 @@ pycache/
 *.gif
 *.png
 tmp.txt
+out/

@@ -18,7 +18,7 @@ def main():
         print("No filename entered. Exiting....\n")
         exit
     else:
-        # try:
+        try:
             image = Image.open(filename)
             print(f"Image Format: {image.format}.\nImage Size: {image.size}.\nImage Mode: {image.mode}")
             pixels = get_pixel_matrix(image)
@@ -31,10 +31,14 @@ def main():
             #ascii_binary = convert_to_txt(ascii_matrix)
             draw_image(filename, image.size, ascii_matrix)
 
-        # except Exception as e:
-        #     print("Error Occurred while reading file. Exiting.....\n")
-        #     print(e)
-        #     exit
+
+        except Exception as e:
+            print("Error Occurred while reading file. Exiting.....\n")
+            print(e)
+            exit
+        finally:
+            image.close()
+            exit
 
 if __name__ == "__main__":
     main()
