@@ -8,3 +8,4 @@ pycache/
 *.mp4
 tmp.txt
 out/
+*.log
