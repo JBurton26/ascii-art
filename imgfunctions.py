@@ -1,20 +1,21 @@
+## MODULE DEPRECATED, FUNCTIONS MOVED TO functions.py
+
 from PIL import Image, ImageDraw, ImageFont
 
 from staticvalues import IMAGE_SIZE
 
 def get_pixel_matrix(
-        image:Image
-        ) -> list:
+    image:Image
+) -> list:
     image.thumbnail(IMAGE_SIZE)
     pixels = list(image.getdata())
     return [pixels[i:i+image.width] for i in range(0, len(pixels), image.width)]
 
-
 def draw_image(
-        old_filename: str,
-        size: tuple,
-        ascii_matrix: list
-        ) -> str:
+    old_filename: str,
+    size: tuple,
+    ascii_matrix: list
+) -> str:
     new_filename = old_filename.split('.')[0] + '.ascii.png'
 
     font = ImageFont.truetype("C:\\Windows\\Fonts\\lucon.ttf", 12)
@@ -24,7 +25,6 @@ def draw_image(
 
     image = Image.new("RGBA", (image_width,image_height), "black")
     drawn_image = ImageDraw.Draw(image)
-
 
     x = 0
     y = 0

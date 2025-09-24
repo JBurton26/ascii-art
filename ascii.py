@@ -5,20 +5,13 @@ from colorama import Fore
 import av
 import logging
 
-from mapfunctions import map_intensity_row
 from staticvalues import ASCII_CHARS
-from textfunctions import convert_to_ascii, print_ascii_matrix, normalize_intensity_matrix, invert_intensity_matrix, convert_to_txt
-from imgfunctions import draw_image, get_pixel_matrix
+from functions import get_pixel_matrix, normalize_intensity_matrix, convert_to_ascii, draw_image
 from profiler import TimerProfile
 
-av.logging.set_level(av.logging.INFO)
-logging.basicConfig(
-    filename='./tmp_test.log',
-    level=logging.INFO,
-    format='%(asctime)s | %(levelname)s | %(funcName)s | %(message)s',
-)
-
-def main():
+def main(
+        
+):
     if len(sys.argv) == 1:
         filename = input("Please enter a filename:\n")
     else:
@@ -35,13 +28,8 @@ def main():
                         frame.to_image().save(frame_filename)
                         image = Image.open(frame_filename)
                         pixels = get_pixel_matrix(image)
-                        intensity_matrix = list(map(map_intensity_row, pixels))
-                        intensity_matrix = normalize_intensity_matrix(intensity_matrix)
-                        #intensity_matrix = invert_intensity_matrix(intensity_matrix)
-
+                        intensity_matrix = normalize_intensity_matrix(pixels)
                         ascii_matrix = convert_to_ascii(intensity_matrix, ASCII_CHARS)
-                        #print_ascii_matrix(ascii_matrix, Fore.GREEN)
-                        #ascii_binary = convert_to_txt(ascii_matrix)
                         new_filename = draw_image(frame_filename, image.size, ascii_matrix)
                         os.remove(frame_filename)
                         image.close()
@@ -73,5 +61,11 @@ def main():
             exit
 
 if __name__ == "__main__":
+    av.logging.set_level(av.logging.INFO)
+    logging.basicConfig(
+        filename='./tmp_test.log',
+        level=logging.INFO,
+        format='%(asctime)s | %(levelname)s | %(funcName)s | %(message)s',
+    )
     logger = logging.Logger
     main()
