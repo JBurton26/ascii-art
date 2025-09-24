@@ -91,7 +91,6 @@ def draw_image(
     image = Image.new("RGBA", (image_width,image_height), "black")
     drawn_image = ImageDraw.Draw(image)
 
-
     x = 0
     y = 0
     
