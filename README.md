@@ -5,7 +5,7 @@ Install the required libraries with `pip install -r requirements.txt`
 Run the code with `./ascii.py` then enter the file path OR add the filepath to the command with `./ascii.py <PATH TO FILE>`. For example: `./ascii.py test.mp4`.
 
 TODO:
-- ~~ Some form of concurrency? ~~ This turned out to be an awful idea
+- ~~Some form of concurrency?~~ This turned out to be an awful idea
 - [ ] A pop of colour 
 - [ ] Audio
 - [ ] Options for IO type
