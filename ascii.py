@@ -18,10 +18,10 @@ def main(
     webcam: bool = False,
     invert: bool = False   
 ):
-    av.logging.set_level(av.logging.DEBUG)
+    av.logging.set_level(av.logging.INFO)
     logging.basicConfig(
         filename='./tmp_test.log',
-        level=logging.DEBUG,
+        level=logging.INFO,
         format='%(asctime)s | %(levelname)s | %(funcName)s | %(message)s',
     )
     if not webcam:
@@ -86,7 +86,6 @@ def main(
                 image = draw_image(image.size, ascii_matrix)
 
                 frame = np.array(image)
-                logger.debug(frame)
                 cv2.imshow('Camera', frame)
 
                 if cv2.waitKey(1) == 27:
