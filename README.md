@@ -16,7 +16,7 @@ TODO:
 - ~~Some form of concurrency?~~ This turned out to be an awful idea
 - [ ] A pop of colour 
 - [ ] Audio
-- [ ] Options for IO type
+- [x] Options for IO type
 - [ ] Options for resolution?
 - [ ] GUI
-- [ ] Live interpolation
+- [x] Live interpolation
