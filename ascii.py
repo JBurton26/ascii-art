@@ -6,6 +6,8 @@ import av
 import logging
 import argparse
 import numpy as np
+from datetime import datetime
+
 from staticvalues import ASCII_CHARS
 #from functions import normalise_intensity_matrix, convert_to_ascii, draw_image
 from profiler import TimerProfile
@@ -76,8 +78,11 @@ def main(
     else:
         try:
             cam = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+            # cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+            # cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
             frame_width = int(cam.get(cv2.CAP_PROP_FRAME_WIDTH))
             frame_height = int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
+            logger.info(f"Frame Width: {frame_width}, Frame Height: {frame_height}")
             print(f"Frame Width: {frame_width}, Frame Height: {frame_height}")
             print(f"Press ESC key to exit.")
             while True:
@@ -94,11 +99,17 @@ def main(
                     image = draw_image(image.size, ascii_matrix)
 
                 frame = np.array(image)
+                # frame = cv2.resize(frame, (1920,1080))
                 cv2.imshow('Camera', frame)
-
-                if cv2.waitKey(1) == 27:
+                key_press = cv2.waitKey(1)
+                if key_press & 0xFF == 27:
                     break
-
+                if key_press & 0xFF == 32:
+                    current_datetime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+                    logger.info(f"Saving screenshot: {current_datetime}.png")
+                    cv2.imwrite(f"out/{current_datetime}.png", frame)
+                    
+            image.close()
             # Release the capture and writer objects
             cam.release()
             # out.release()
