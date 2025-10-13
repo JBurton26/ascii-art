@@ -1,5 +1,4 @@
 from PIL import Image, ImageDraw, ImageFont
-
 from staticvalues import IMAGE_SIZE, MAX_PIXEL_VALUE
 
 def get_pixel_matrix(
@@ -9,7 +8,7 @@ def get_pixel_matrix(
     pixels = list(image.getdata())
     return [pixels[i:i+image.width] for i in range(0, len(pixels), image.width)]
 
-def normalize_intensity_matrix(
+def normalise_intensity_matrix(
     pixels: list,
     invert: bool = False
 ) -> list:
@@ -25,11 +24,8 @@ def normalize_intensity_matrix(
         row_intensity = list(map(map_intensity_pixel, pixels))
         return row_intensity
 
-
-
-
     intensity_matrix = list(map(map_intensity_row, pixels))
-    normalized_intensity_matrix = []
+    normalised_intensity_matrix = []
     max_pixel = max(map(max, intensity_matrix))
     min_pixel = min(map(min, intensity_matrix))
 
@@ -38,12 +34,12 @@ def normalize_intensity_matrix(
         for p in row:
             r = MAX_PIXEL_VALUE * (p - min_pixel) / float(max_pixel - min_pixel)
             rescaled_row.append(r)
-        normalized_intensity_matrix.append(rescaled_row)
+        normalised_intensity_matrix.append(rescaled_row)
 
     if invert:
-        normalized_intensity_matrix = invert_intensity_matrix(normalized_intensity_matrix)
+        normalised_intensity_matrix = invert_intensity_matrix(normalised_intensity_matrix)
 
-    return normalized_intensity_matrix
+    return normalised_intensity_matrix
 
 def invert_intensity_matrix(
     intensity_matrix: list

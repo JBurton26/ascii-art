@@ -1,11 +1,23 @@
+# Generated Files
 pycache
 pycache/
 *.pyc
+tmp.txt
+out/
+*.log
+.vscode/
+build/
+
+src/*.c
+*.pyd
+
+
+
+# I) Files
 *.jpg
 *.jpeg
 *.gif
 *.png
 *.mp4
-tmp.txt
-out/
-*.log
+
+
