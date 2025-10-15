@@ -1,7 +1,6 @@
 # Source: geeksforgeeks.org
 import cv2
 
-print("hello")
 # Open the default camera
 cam = cv2.VideoCapture(0,cv2.CAP_DSHOW)
 
@@ -14,7 +13,6 @@ fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 out = cv2.VideoWriter('output.mp4', fourcc, 20.0, (frame_width, frame_height))
 
 while True:
-    print("hello")
     ret, frame = cam.read()
 
     # Write the frame to the output file

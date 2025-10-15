@@ -7,7 +7,7 @@ import logging
 import argparse
 import numpy as np
 from datetime import datetime
-
+from pathlib import Path
 from staticvalues import ASCII_CHARS
 #from functions import normalise_intensity_matrix, convert_to_ascii, draw_image
 from profiler import TimerProfile
@@ -34,9 +34,10 @@ def main(
 
     if not webcam:
         try:
-            with av.open(filename) as container:
+            filename = Path(filename).absolute()
+            with av.open(f'{filename}') as container:
                 for index, frame in enumerate(container.decode(video=0)):
-                    frame_filename = f"out/tmp/frame-{index:04d}.jpg"
+                    frame_filename = Path(f"./out/tmp/frame-{index:04d}.jpg").absolute()
                     frame.to_image().save(frame_filename)
                     image = Image.open(frame_filename)
                     pixels = get_pixel_matrix(image)
@@ -46,31 +47,37 @@ def main(
                         image = draw_image(image.size, ascii_matrix, pixels)
                     else:
                         image = draw_image(image.size, ascii_matrix)
-                    new_filename = frame_filename.split('.')[0] + '.ascii.png'
+                    new_filename = frame_filename.with_suffix('.ascii.png')
                     image.save(new_filename, "PNG")
                     os.remove(frame_filename)
                     image.close()
                 input_codec_name = container.streams.video[0].codec_context.name
                 input_codec_fps = container.streams.video[0].codec_context.rate
-            ascii_filename = "out/" + filename.split('.')[0] + ".ascii.mp4"
-            ascii_frames = os.listdir('out/tmp/')
-            with av.open(ascii_filename, 'w') as container:
+            temp_filename = Path("./out/temp.mp4")
+            ascii_frames = os.listdir('./out/tmp/')
+
+            with av.open(str(temp_filename), 'w') as container:
                 stream = container.add_stream(input_codec_name, input_codec_fps)
                 stream.width = 1920
                 stream.height = 1080
                 stream.pix_fmt = "yuv420p"
                 for ascii_frame in ascii_frames:
-                    image = Image.open(f"out/tmp/{ascii_frame}")
+                    image = Image.open(f"./out/tmp/{ascii_frame}")
                     frame = av.VideoFrame.from_image(image)
                     for packet in stream.encode(frame):
                         container.mux(packet)
                     image.close()
-                    os.remove(f"out/tmp/{ascii_frame}")
+                    os.remove(f"./out/tmp/{ascii_frame}")
                 for packet in stream.encode():
                     container.mux(packet)
-                
+            
+            out_filename = Path(f'{str(temp_filename.parent)}', filename.stem).with_suffix('.ascii.mp4')
+            logger.debug(f'ASCII_OUT_FILE_WITH_AUDIO: {out_filename}')
+            
+            os.system(f'ffmpeg -y -i "{temp_filename.absolute()}" -i "{filename.absolute()}" -c copy -map 0:0 -map 1:1 -shortest "{out_filename.absolute()}"')
+            os.remove(temp_filename)
         except Exception as e:
-            logger.error(f"{type(e)}: {e}")
+            logger.error(f"{type(e)}: {e}", exc_info=True)
             print(e)
             exit
         finally:
@@ -125,11 +132,11 @@ def main(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--filename", dest="filename", default=None, type=str)
-    parser.add_argument("-wc", "--webcam", dest="webcam", default=False, type=bool)
+    parser.add_argument("--webcam", dest="webcam", action='store_true')
     parser.add_argument("--invert", dest="invert", action='store_true')
     parser.add_argument("--colour", dest="colour", action='store_true')
     args = parser.parse_args()
-    
+
     if args.filename:
         if not os.path.exists(args.filename):
             logger.error(msg=f"File: {args.filename} does not exist at the path specified.")
