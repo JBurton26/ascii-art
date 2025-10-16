@@ -56,7 +56,7 @@ def main(
                 input_codec_name = container.streams.video[0].codec_context.name
                 input_codec_fps = container.streams.video[0].codec_context.rate
             temp_filename = Path("./out/temp.mp4")
-            ascii_frames = os.listdir('./out/tmp/').sort()
+            ascii_frames = sorted(os.listdir('./out/tmp/'))
 
             with av.open(str(temp_filename), 'w') as container:
                 stream = container.add_stream(input_codec_name, input_codec_fps)
