@@ -3,7 +3,7 @@ OUT="./out"
 TMP="$OUT/tmp"
 
 # Build Cython library, will also check if the relevant build tools are available (C++ Build Tools >2014)
-python setup.py build_ext --inplace
+python3 setup.py build_ext --inplace
 
 # Ensure folders are present
 

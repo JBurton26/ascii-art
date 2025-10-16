@@ -86,7 +86,7 @@ def draw_image(
     pixels: list = None
 ) -> Image:
     
-    font = ImageFont.truetype("C:\\Windows\\Fonts\\lucon.ttf", 12)
+    #font = ImageFont.truetype("C:\\Windows\\Fonts\\lucon.ttf", 12)
     image_width, image_height = size
     image_width = image_width * 10
     image_height = image_height * 12
@@ -100,17 +100,18 @@ def draw_image(
     if pixels is None:
         for row in ascii_matrix:
             for column in row:
-                drawn_image.text((x,y), column, fill=(0,255,0), font=font)
+                drawn_image.text((x,y), column, fill=(0,255,0))#, font=font)
                 x += 10
             x = 0
             y += 12
+        
     else:
         # All rows and columns are of equal length between the ascii matrix and the pixel matrix
         row_length = len(ascii_matrix)
         column_length = len(ascii_matrix[0])
         for row_index in range(row_length):
             for column_index in range(column_length):
-                drawn_image.text((x,y), ascii_matrix[row_index][column_index], fill=pixels[row_index][column_index], font=font)
+                drawn_image.text((x,y), ascii_matrix[row_index][column_index], fill=pixels[row_index][column_index])#, font=font)
                 x += 10
             x = 0
             y += 12

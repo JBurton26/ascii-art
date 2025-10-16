@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from PIL import Image
 import os
 import cv2
@@ -84,7 +84,7 @@ def main(
             exit
     else:
         try:
-            cam = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+            cam = cv2.VideoCapture(0)#,cv2.CAP_DSHOW)
             # cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
             # cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
             frame_width = int(cam.get(cv2.CAP_PROP_FRAME_WIDTH))

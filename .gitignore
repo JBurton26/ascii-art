@@ -7,10 +7,11 @@ out/
 *.log
 .vscode/
 build/
+.venv
 
 src/*.c
 *.pyd
-
+*.so
 
 
 # I) Files
