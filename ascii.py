@@ -8,6 +8,8 @@ import argparse
 import numpy as np
 from datetime import datetime
 from pathlib import Path
+import platform
+
 from staticvalues import ASCII_CHARS
 #from functions import normalise_intensity_matrix, convert_to_ascii, draw_image
 from profiler import TimerProfile
@@ -84,9 +86,11 @@ def main(
             exit
     else:
         try:
-            cam = cv2.VideoCapture(0)#,cv2.CAP_DSHOW)
-            # cam.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-            # cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+            if platform.system() == 'Windows':
+                cam = cv2.VideoCapture(0,cv2.CAP_DSHOW)
+            else:
+                cam = cv2.VideoCapture(0)
+                
             frame_width = int(cam.get(cv2.CAP_PROP_FRAME_WIDTH))
             frame_height = int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
             logger.info(f"Frame Width: {frame_width}, Frame Height: {frame_height}")
