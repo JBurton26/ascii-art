@@ -47,5 +47,5 @@ class TimerProfile(Profiler):
 
 	def report(self):
 		duration = self.stop_time - self.start_time if self.stop_time and self.start_time else None
-		self.logger.info(f"Time taken: {duration:.2f} ms")
+		self.logger.info(f"Time taken: {duration:.2f} s")
 		return duration
