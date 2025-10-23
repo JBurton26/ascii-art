@@ -10,10 +10,10 @@ from datetime import datetime
 from pathlib import Path
 import platform
 
-from staticvalues import ASCII_CHARS
+from staticvalues import ASCII_CHARS, IMAGE_SIZE, VIDEO_RES
 #from functions import normalise_intensity_matrix, convert_to_ascii, draw_image
 from profiler import TimerProfile
-from functions import get_pixel_matrix, normalise_intensity_matrix, convert_to_ascii, draw_image
+from functions import normalise_intensity_matrix, convert_to_ascii, draw_image, save_all_frames
 
 logger = logging.getLogger(__name__)
 
@@ -36,54 +36,41 @@ def main(
 
     if not webcam:
         try:
-            filename = Path(filename).absolute()
-            with av.open(f'{filename}') as container:
-                for index, frame in enumerate(container.decode(video=0)):
-                    frame_filename = Path(f"./out/tmp/frame-{index:04d}.jpg").absolute()
-                    frame.to_image().save(frame_filename)
-                    image = Image.open(frame_filename)
-                    pixels = get_pixel_matrix(image)
-                    intensity_matrix = normalise_intensity_matrix(pixels, invert)
+            with TimerProfile() as timer:
+                filename = Path(filename).absolute()
+                fps = save_all_frames(filename)
+
+                fourcc = cv2.VideoWriter_fourcc(*'mp4v') 
+                out_video = cv2.VideoWriter('./out/temp.mp4', fourcc, fps, VIDEO_RES)
+                for frame in sorted(os.listdir('./out/tmp/')):
+                    image_data = cv2.imread(f"./out/tmp/{frame}")
+                    intensity_matrix = normalise_intensity_matrix(image_data, invert)
                     ascii_matrix = convert_to_ascii(intensity_matrix, ASCII_CHARS)
                     if colour:  
-                        image = draw_image(image.size, ascii_matrix, pixels)
+                        image = draw_image(IMAGE_SIZE, ascii_matrix, image_data)
                     else:
-                        image = draw_image(image.size, ascii_matrix)
-                    new_filename = frame_filename.with_suffix('.ascii.png')
-                    image.save(new_filename, "PNG")
-                    os.remove(frame_filename)
-                    image.close()
-                input_codec_name = container.streams.video[0].codec_context.name
-                input_codec_fps = container.streams.video[0].codec_context.rate
-            temp_filename = Path("./out/temp.mp4")
-            ascii_frames = sorted(os.listdir('./out/tmp/'))
+                        image = draw_image(IMAGE_SIZE, ascii_matrix)
+                    
+                    os.remove(f"./out/tmp/{frame}")
+                    out_video.write(image)
 
-            with av.open(str(temp_filename), 'w') as container:
-                stream = container.add_stream(input_codec_name, input_codec_fps)
-                stream.width = 1920
-                stream.height = 1080
-                stream.pix_fmt = "yuv420p"
-                for ascii_frame in ascii_frames:
-                    image = Image.open(f"./out/tmp/{ascii_frame}")
-                    frame = av.VideoFrame.from_image(image)
-                    for packet in stream.encode(frame):
-                        container.mux(packet)
-                    image.close()
-                    os.remove(f"./out/tmp/{ascii_frame}")
-                for packet in stream.encode():
-                    container.mux(packet)
-            
-            out_filename = Path(f'{str(temp_filename.parent)}', filename.stem).with_suffix('.ascii.mp4')
-            logger.debug(f'ASCII_OUT_FILE_WITH_AUDIO: {out_filename}')
-            
-            os.system(f'ffmpeg -y -i "{temp_filename.absolute()}" -i "{filename.absolute()}" -c copy -map 0:0 -map 1:1 -shortest "{out_filename.absolute()}"')
-            os.remove(temp_filename)
+                cv2.destroyAllWindows()
+                out_video.release()
+                
+                out_filename = Path(f'./out/', filename.stem).with_suffix('.ascii.mp4')
+                logger.INFO(f'ASCII_OUT_FILE_WITH_AUDIO: {out_filename}')
+                
+                os.system(f'ffmpeg -y -i "./out/temp.mp4" -i "{filename.absolute()}" -c copy -map 0:0 -map 1:1 -shortest "{out_filename.absolute()}"')
+                os.remove("./out/temp.mp4")
+
         except Exception as e:
             logger.error(f"{type(e)}: {e}", exc_info=True)
             print(e)
             exit
+
         finally:
             exit
+
     else:
         try:
             if platform.system() == 'Windows':
@@ -98,32 +85,31 @@ def main(
             print(f"Press ESC key to exit.")
             while True:
                 ret, frame = cam.read()
-                image = Image.fromarray(frame)
-                pixels = get_pixel_matrix(image)
-                intensity_matrix = normalise_intensity_matrix(pixels, invert)
+                frame = cv2.resize(frame, IMAGE_SIZE)
+                # image = Image.fromarray(frame)
+                # pixels = get_pixel_matrix(image)
+                intensity_matrix = normalise_intensity_matrix(frame, invert)
                 ascii_matrix = convert_to_ascii(intensity_matrix, ASCII_CHARS)
                 # print(f"len(pixels): {len(pixels)}")
                 # print(f"len(ascii_matrix): {len(ascii_matrix)}")
                 if colour:  
-                    image = draw_image(image.size, ascii_matrix, pixels)
+                    image = draw_image(IMAGE_SIZE, ascii_matrix, frame)
                 else:
-                    image = draw_image(image.size, ascii_matrix)
+                    image = draw_image(IMAGE_SIZE, ascii_matrix)
 
-                frame = np.array(image)
-                # frame = cv2.resize(frame, (1920,1080))
-                cv2.imshow('Camera', frame)
+                #frame = np.array(image)
+                frame = cv2.resize(frame, VIDEO_RES)
+                cv2.imshow('Camera', image)
                 key_press = cv2.waitKey(1)
                 if key_press & 0xFF == 27:
                     break
                 if key_press & 0xFF == 32:
                     current_datetime = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
                     logger.info(f"Saving screenshot: {current_datetime}.png")
-                    cv2.imwrite(f"out/{current_datetime}.png", frame)
+                    cv2.imwrite(f"out/{current_datetime}.png", image)
                     
-            image.close()
             # Release the capture and writer objects
             cam.release()
-            # out.release()
             cv2.destroyAllWindows()
         except:
             logger.error(f"{type(e)}: {e}", exc_info=True)
@@ -151,5 +137,5 @@ if __name__ == "__main__":
     if not args.filename and not args.webcam:
         logger.error("Must present a filename with '-f FILENAME', or allow live interpolation with '-wc True'.")
         exit
-    with TimerProfile() as timer:
-        main(args.filename, args.webcam, args.invert, args.colour)
+        
+    main(args.filename, args.webcam, args.invert, args.colour)
